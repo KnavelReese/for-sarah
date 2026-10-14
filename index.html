@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Question For You 💗</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<script>
+  /* ============================================================
+     EDIT THIS PART — everything else works on its own
+     ============================================================ */
+  const CONFIG = {
+    herName: "Sarah",                 // her name or nickname
+    fromName: "Reese",                  // your name
+    dateDay: "Saturday, October 17", // the day of the date
+    // Photos: put them in the same folder as this file.
+    // Any that don't exist are just skipped, so extra lines are fine.
+    photos: [
+      { file: "photo1.jpg", caption: "" },
+      { file: "photo2.jpg", caption: "" },
+      { file: "photo3.jpg", caption: "" },
+      { file: "photo4.jpg", caption: "" },
+      { file: "photo5.jpg", caption: "" },
+      { file: "photo6.jpg", caption: "" },
+      { file: "photo7.jpg", caption: "" },
+      { file: "photo8.jpg", caption: "" },
+      { file: "photo9.jpg", caption: "" },
+    ],
+    plan: [
+      { emoji: "🥞", title: "Breakfast at Sundawg", time: "9:00 AM", note: "Greensburg, wear something comfy" },
+      { emoji: "🎃", title: "Pumpkin Patch", time: "12:00 PM", note: "Where? It's a surprise 🤫 we're picking the BEST pumpkin" },
+      { emoji: "🍝", title: "Dinner at J Corks", time: "6:00 PM", note: "Somewhere special 💕" },
+    ],
+  };
+</script>
+<style>
+  :root {
+    --pink-50: #fff0f6;
+    --pink-100: #ffd6e7;
+    --pink-300: #ff8fbf;
+    --pink-500: #ff4f9a;
+    --pink-700: #d6246e;
+    --text: #6b1f43;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh;
+    background: linear-gradient(160deg, var(--pink-50), var(--pink-100));
+    color: var(--text);
+    font-family: "Quicksand", system-ui, sans-serif;
+    overflow-x: hidden;
+    text-align: center;
+  }
+  .hearts { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .hearts span {
+    position: absolute; bottom: -40px; opacity: .55;
+    animation: floatUp linear infinite;
+  }
+  @keyframes floatUp {
+    to { transform: translateY(-115vh) rotate(25deg); opacity: 0; }
+  }
+  main { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 40px 16px 80px; }
+  h1, h2 { font-family: "Pacifico", cursive; font-weight: 400; color: var(--pink-700); margin: 0 0 12px; }
+  h1 { font-size: clamp(2rem, 7vw, 3.2rem); }
+  h2 { font-size: clamp(1.6rem, 5vw, 2.3rem); }
+  p.lead { font-size: 1.15rem; margin: 0 0 28px; }
+
+  .gallery {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: clamp(8px, 2.5vw, 16px); margin: 0 0 40px;
+  }
+  .polaroid {
+    background: #fff; padding: clamp(5px, 1.5vw, 10px) clamp(5px, 1.5vw, 10px) clamp(8px, 2.5vw, 14px); border-radius: 6px;
+    box-shadow: 0 8px 20px rgba(214, 36, 110, .18);
+    transform: rotate(var(--tilt));
+    transition: transform .25s;
+  }
+  .polaroid:hover { transform: rotate(0) scale(1.04); }
+  .polaroid img { width: 100%; aspect-ratio: 1; object-fit: cover; object-position: center 30%; border-radius: 3px; display: block; }
+  .polaroid figcaption { margin-top: 8px; font-size: .95rem; }
+
+  .card {
+    background: rgba(255,255,255,.75); backdrop-filter: blur(6px);
+    border-radius: 24px; padding: 32px 20px;
+    box-shadow: 0 12px 30px rgba(214, 36, 110, .15);
+  }
+  .buttons { display: flex; gap: 18px; justify-content: center; align-items: center; flex-wrap: wrap; min-height: 90px; }
+  button {
+    font-family: inherit; font-weight: 700; border: none; cursor: pointer;
+    border-radius: 999px; padding: 14px 34px; font-size: 1.2rem;
+    transition: transform .2s, font-size .2s, padding .2s;
+  }
+  #yes {
+    background: var(--pink-500); color: #fff;
+    box-shadow: 0 6px 16px rgba(255, 79, 154, .45);
+  }
+  #yes:hover { transform: scale(1.06); }
+  #no {
+    background: #fff; color: var(--pink-700); border: 2px solid var(--pink-300);
+    touch-action: none; white-space: nowrap;
+  }
+  #no.loose { position: fixed; z-index: 5; transition: left .25s, top .25s; }
+
+  #ask { min-height: calc(100vh - 120px); display: flex; flex-direction: column; justify-content: center; }
+  #plan { display: none; }
+
+  /* Photo rails down both sides after she says yes */
+  .rail {
+    display: none; position: fixed; top: 0; bottom: 0; z-index: 1;
+    width: min(170px, 17vh); padding: 12px 0;
+    flex-direction: column; justify-content: space-evenly;
+    pointer-events: none;
+  }
+  .rail.left { left: 16px; }
+  .rail.right { right: 16px; }
+  body.said-yes .rail { display: flex; }
+  body.said-yes main { z-index: 2; max-width: calc(720px + 2 * min(170px, 17vh) + 32px); padding-inline: calc(min(170px, 17vh) + 32px); }
+  .rail .polaroid { padding: 6px 6px 10px; opacity: 0; }
+  .rail.left .polaroid { animation: inLeft .7s ease-out forwards; }
+  .rail.right .polaroid { animation: inRight .7s ease-out forwards; }
+  @keyframes inLeft { from { opacity: 0; transform: translateX(-160%) rotate(-30deg); } to { opacity: 1; transform: rotate(var(--tilt)); } }
+  @keyframes inRight { from { opacity: 0; transform: translateX(160%) rotate(30deg); } to { opacity: 1; transform: rotate(var(--tilt)); } }
+  /* Phones: photos peek in from the edges, the plan card sits on top */
+  @media (max-width: 760px) {
+    .rail { width: 92px; }
+    .rail.left { left: -30px; }
+    .rail.right { right: -30px; }
+    body.said-yes main { padding-inline: 50px; max-width: none; }
+    body.said-yes .card { padding: 26px 14px; }
+    .stop { padding: 12px; gap: 10px; }
+    .stop .emoji { font-size: 1.9rem; }
+  }
+  .timeline { display: grid; gap: 16px; margin-top: 24px; text-align: left; }
+  .stop {
+    display: flex; gap: 16px; align-items: center;
+    background: #fff; border-radius: 18px; padding: 16px 18px;
+    box-shadow: 0 6px 16px rgba(214, 36, 110, .12);
+    opacity: 0; transform: translateY(16px);
+    animation: pop .5s forwards;
+  }
+  .stop .emoji { font-size: 2.4rem; }
+  .stop h3 { margin: 0; color: var(--pink-700); font-size: 1.25rem; }
+  .stop .time { font-weight: 700; }
+  .stop p { margin: 2px 0 0; }
+  @keyframes pop { to { opacity: 1; transform: none; } }
+  .signoff { margin-top: 28px; font-size: 1.1rem; }
+</style>
+</head>
+<body>
+<div class="hearts" id="hearts"></div>
+
+<div class="rail left" id="railLeft"></div>
+<div class="rail right" id="railRight"></div>
+
+<main>
+  <section id="ask">
+    <h1 id="greeting"></h1>
+    <p class="lead">6 months with you already 💗 I have a question for you…</p>
+    <div class="gallery" id="gallery" hidden></div>
+
+    <div class="card">
+      <h2>Will you go on a date with me?</h2>
+      <div class="buttons">
+        <button id="yes">Yes 💖</button>
+        <button id="no">No</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="plan">
+    <div class="card">
+      <h1>YAYYY 🥰</h1>
+      <p class="lead">I knew you'd say yes! Here's the plan for <strong id="planDay"></strong>:</p>
+      <div class="timeline" id="timeline"></div>
+      <p class="signoff">Happy 6 months 💕<br>Love, <span id="from"></span></p>
+    </div>
+  </section>
+</main>
+
+<script>
+  // Fill in text from CONFIG
+  document.getElementById("greeting").textContent = "Hey " + CONFIG.herName + " 💕";
+  document.getElementById("planDay").textContent = CONFIG.dateDay;
+  document.getElementById("from").textContent = CONFIG.fromName;
+
+  // Photos (missing ones remove themselves)
+  const gallery = document.getElementById("gallery");
+  CONFIG.photos.forEach((p, i) => {
+    const fig = document.createElement("figure");
+    fig.className = "polaroid";
+    fig.style.margin = "0";
+    fig.style.setProperty("--tilt", (i % 2 ? 3 : -3) + "deg");
+    const img = document.createElement("img");
+    img.src = p.file;
+    img.alt = p.caption || "us";
+    img.onerror = () => fig.remove();
+    fig.appendChild(img);
+    if (p.caption) {
+      const cap = document.createElement("figcaption");
+      cap.textContent = p.caption;
+      fig.appendChild(cap);
+    }
+    gallery.appendChild(fig);
+  });
+
+  // Floating hearts background
+  const hearts = document.getElementById("hearts");
+  const heartChars = ["💗", "💕", "💖", "🩷", "❤️"];
+  function spawnHeart() {
+    const h = document.createElement("span");
+    h.textContent = heartChars[Math.floor(Math.random() * heartChars.length)];
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.fontSize = 14 + Math.random() * 22 + "px";
+    h.style.animationDuration = 6 + Math.random() * 6 + "s";
+    hearts.appendChild(h);
+    setTimeout(() => h.remove(), 12000);
+  }
+  setInterval(spawnHeart, 500);
+
+  // The "No" button that won't let itself be pressed
+  const yes = document.getElementById("yes");
+  const no = document.getElementById("no");
+  const noTexts = ["No", "Are you sure?", "Really sure??", "Think again 🥺", "Pleaseee", "Wrong button 😤", "Nice try", "Just press yes 💕"];
+  let tries = 0;
+  let yesSize = 1.2;
+
+  function runAway(e) {
+    if (e) e.preventDefault();
+    tries++;
+    no.textContent = noTexts[Math.min(tries, noTexts.length - 1)];
+    yesSize = Math.min(yesSize + 0.25, 3);
+    yes.style.fontSize = yesSize + "rem";
+
+    const rect = no.getBoundingClientRect();
+    if (!no.classList.contains("loose")) {
+      no.style.left = rect.left + "px";
+      no.style.top = rect.top + "px";
+      no.classList.add("loose");
+    }
+    const pad = 16;
+    const maxX = window.innerWidth - rect.width - pad;
+    const maxY = window.innerHeight - rect.height - pad;
+    let x, y;
+    do {
+      x = pad + Math.random() * Math.max(maxX - pad, 0);
+      y = pad + Math.random() * Math.max(maxY - pad, 0);
+    } while (Math.abs(x - rect.left) < 80 && Math.abs(y - rect.top) < 80);
+    no.style.left = x + "px";
+    no.style.top = y + "px";
+  }
+  no.addEventListener("mouseenter", runAway);
+  no.addEventListener("touchstart", runAway, { passive: false });
+  no.addEventListener("click", runAway);
+
+  // "Yes" → show the plan
+  yes.addEventListener("click", () => {
+    document.body.classList.add("said-yes");
+    // Copy the photos that loaded into the side rails
+    const loaded = [...gallery.querySelectorAll("img")].map(img => img.getAttribute("src"));
+    loaded.forEach((src, i) => {
+      const fig = document.createElement("figure");
+      fig.className = "polaroid";
+      fig.style.margin = "0";
+      fig.style.setProperty("--tilt", (i % 2 ? 6 : -6) + "deg");
+      fig.style.animationDelay = 0.2 + i * 0.15 + "s";
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = "us";
+      fig.appendChild(img);
+      document.getElementById(i % 2 ? "railRight" : "railLeft").appendChild(fig);
+    });
+    document.getElementById("ask").style.display = "none";
+    no.style.display = "none";
+    const plan = document.getElementById("plan");
+    plan.style.display = "block";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    const timeline = document.getElementById("timeline");
+    CONFIG.plan.forEach((s, i) => {
+      const row = document.createElement("div");
+      row.className = "stop";
+      row.style.animationDelay = 0.3 + i * 0.4 + "s";
+      row.innerHTML = '<div class="emoji"></div><div><h3></h3><div class="time"></div><p></p></div>';
+      row.querySelector(".emoji").textContent = s.emoji;
+      row.querySelector("h3").textContent = s.title;
+      row.querySelector(".time").textContent = s.time;
+      row.querySelector("p").textContent = s.note;
+      timeline.appendChild(row);
+    });
+
+    for (let i = 0; i < 40; i++) setTimeout(spawnHeart, i * 40);
+  });
+</script>
+</body>
+</html>
