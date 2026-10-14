@@ -83,7 +83,7 @@
   .polaroid figcaption { margin-top: 8px; font-size: .95rem; }
 
   .card {
-    background: rgba(255,255,255,.75); backdrop-filter: blur(6px);
+    background: rgba(255,255,255,.75); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
     border-radius: 24px; padding: 32px 20px;
     box-shadow: 0 12px 30px rgba(214, 36, 110, .15);
   }
@@ -122,10 +122,26 @@
   body.said-yes .rail { display: flex; }
   body.said-yes main { z-index: 2; max-width: calc(720px + 2 * min(170px, 17vh) + 32px); padding-inline: calc(min(170px, 17vh) + 32px); }
   .rail .polaroid { padding: 6px 6px 10px; opacity: 0; }
+  .blank-photo {
+    aspect-ratio: 1; border-radius: 3px; background: var(--pink-50);
+    border: 2px dashed var(--pink-300);
+    display: flex; align-items: center; justify-content: center;
+    font-size: clamp(1.2rem, 3.5vh, 2.2rem);
+  }
+  .rail figcaption { font-size: clamp(.6rem, 1.5vh, .8rem); font-weight: 700; color: var(--pink-700); margin-top: 4px; line-height: 1.2; }
   .rail.left .polaroid { animation: inLeft .7s ease-out forwards; }
   .rail.right .polaroid { animation: inRight .7s ease-out forwards; }
   @keyframes inLeft { from { opacity: 0; transform: translateX(-160%) rotate(-30deg); } to { opacity: 1; transform: rotate(var(--tilt)); } }
   @keyframes inRight { from { opacity: 0; transform: translateX(160%) rotate(30deg); } to { opacity: 1; transform: rotate(var(--tilt)); } }
+  /* Computers: 2x2 plan so the whole thing fits on one screen */
+  @media (min-width: 761px) {
+    .timeline { grid-template-columns: 1fr 1fr; }
+    body.said-yes main { padding-top: 24px; padding-bottom: 24px; }
+    #plan .card { padding: 24px 20px; }
+    #plan h1 { margin-bottom: 4px; }
+    #plan p.lead { margin-bottom: 0; }
+    .signoff { margin-top: 20px; }
+  }
   /* Phones: photos peek in from the edges, the plan card sits on top */
   @media (max-width: 760px) {
     .rail { width: 92px; }
@@ -248,11 +264,15 @@
     const pad = 16;
     const maxX = window.innerWidth - rect.width - pad;
     const maxY = window.innerHeight - rect.height - pad;
-    let x, y;
+    // Pick a new spot that's away from where it was and doesn't cover the Yes button
+    const yr = yes.getBoundingClientRect();
+    const coversYes = (x, y) => x < yr.right + 12 && x + rect.width > yr.left - 12 && y < yr.bottom + 12 && y + rect.height > yr.top - 12;
+    let x, y, tries2 = 0;
     do {
       x = pad + Math.random() * Math.max(maxX - pad, 0);
       y = pad + Math.random() * Math.max(maxY - pad, 0);
-    } while (Math.abs(x - rect.left) < 80 && Math.abs(y - rect.top) < 80);
+      tries2++;
+    } while (tries2 < 50 && ((Math.abs(x - rect.left) < 80 && Math.abs(y - rect.top) < 80) || coversYes(x, y)));
     no.style.left = x + "px";
     no.style.top = y + "px";
   }
@@ -277,6 +297,14 @@
       fig.appendChild(img);
       document.getElementById(i % 2 ? "railRight" : "railLeft").appendChild(fig);
     });
+    // Empty polaroid saved for a picture from the date
+    const blank = document.createElement("figure");
+    blank.className = "polaroid";
+    blank.style.margin = "0";
+    blank.style.setProperty("--tilt", "5deg");
+    blank.style.animationDelay = 0.2 + loaded.length * 0.15 + "s";
+    blank.innerHTML = '<div class="blank-photo">📸</div><figcaption>Saving this spot for Saturday</figcaption>';
+    document.getElementById("railRight").appendChild(blank);
     document.getElementById("ask").style.display = "none";
     no.style.display = "none";
     const plan = document.getElementById("plan");
