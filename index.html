@@ -6,15 +6,12 @@
 <title>A Question For You 💗</title>
 <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
 <script>
-  /* ============================================================
-     EDIT THIS PART — everything else works on its own
-     ============================================================ */
+
   const CONFIG = {
-    herName: "Sarah",                 // her name or nickname
-    fromName: "Reese",                  // your name
-    dateDay: "Saturday, October 17", // the day of the date
-    // Photos: put them in the same folder as this file.
-    // Any that don't exist are just skipped, so extra lines are fine.
+    herName: "Sarah",                 
+    fromName: "Reese",                 
+    dateDay: "Saturday, October 17", 
+    
     photos: [
       { file: "photo1.jpg", caption: "" },
       { file: "photo2.jpg", caption: "" },
@@ -27,9 +24,9 @@
       { file: "photo9.jpg", caption: "" },
     ],
     plan: [
-      { emoji: "🥞", title: "Breakfast",     time: "9:00 AM",  note: "At our usual spot… you already know 😉" },
+      { emoji: "🥞", title: "Breakfast",     time: "9:00 AM",  note: "You Could Probably Guess where" },
       { emoji: "🎃", title: "Pumpkin Patch", time: "12:00 PM", note: "We're picking the BEST pumpkin" },
-      { emoji: "🍝", title: "Dinner",        time: "6:00 PM",  note: "Somewhere fancy ✨ dress up a little" },
+      { emoji: "🍝", title: "Dinner",        time: "6:00 PM",  note: "Somewhere a little fancy dress up a little" },
       { emoji: "🍦", title: "Sweet Treat",   time: "8:00 PM",  note: "Ice cream to end the night 💕" },
     ],
   };
@@ -225,7 +222,6 @@
     gallery.appendChild(fig);
   });
 
-  // Floating hearts background
   const hearts = document.getElementById("hearts");
   const heartChars = ["💗", "💕", "💖", "🩷", "❤️"];
   function spawnHeart() {
@@ -239,7 +235,6 @@
   }
   setInterval(spawnHeart, 500);
 
-  // The "No" button that won't let itself be pressed
   const yes = document.getElementById("yes");
   const no = document.getElementById("no");
   const noTexts = ["No", "Are you sure?", "Really sure??", "Think again 🥺", "Pleaseee", "Wrong button 😤", "Nice try", "Just press yes 💕"];
@@ -258,13 +253,11 @@
       no.style.left = rect.left + "px";
       no.style.top = rect.top + "px";
       no.classList.add("loose");
-      // Move it out of the card so it positions against the screen, not the card
       document.body.appendChild(no);
     }
     const pad = 16;
     const maxX = window.innerWidth - rect.width - pad;
     const maxY = window.innerHeight - rect.height - pad;
-    // Pick a new spot that's away from where it was and doesn't cover the Yes button
     const yr = yes.getBoundingClientRect();
     const coversYes = (x, y) => x < yr.right + 12 && x + rect.width > yr.left - 12 && y < yr.bottom + 12 && y + rect.height > yr.top - 12;
     let x, y, tries2 = 0;
