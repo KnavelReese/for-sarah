@@ -103,7 +103,10 @@
   }
   #no.loose { position: fixed; z-index: 5; transition: left .25s, top .25s; }
 
-  #ask { min-height: calc(100vh - 120px); display: flex; flex-direction: column; justify-content: center; }
+  /* First screen: fits the window exactly and can't scroll */
+  body:not(.said-yes) { height: 100vh; height: 100dvh; overflow: hidden; }
+  body:not(.said-yes) main { padding-top: 0; padding-bottom: 0; }
+  #ask { height: 100vh; height: 100dvh; display: flex; flex-direction: column; justify-content: center; }
   #plan { display: none; }
 
   /* Photo rails down both sides after she says yes */
@@ -238,6 +241,8 @@
       no.style.left = rect.left + "px";
       no.style.top = rect.top + "px";
       no.classList.add("loose");
+      // Move it out of the card so it positions against the screen, not the card
+      document.body.appendChild(no);
     }
     const pad = 16;
     const maxX = window.innerWidth - rect.width - pad;
