@@ -27,7 +27,8 @@
       { emoji: "🥞", title: "Breakfast",     time: "9:00 AM",  note: "You Could Probably Guess where" },
       { emoji: "🎃", title: "Pumpkin Patch", time: "12:00 PM", note: "We're picking the BEST pumpkin" },
       { emoji: "🍝", title: "Dinner",        time: "6:00 PM",  note: "Somewhere a little fancy dress up a little" },
-      { emoji: "🍦", title: "Sweet Treat",   time: "8:00 PM",  note: "Ice cream to end the night 💕" },
+      { emoji: "🍦", title: "Sweet Treat",   time: "7:30 PM",  note: "Ice cream 💕" },
+      { emoji: "🍿", title: "Movie Night",   time: "9:00 PM",  note: "Popcorn, wine and a movie at home 🍷" },
     ],
   };
 </script>
@@ -133,11 +134,18 @@
   /* Computers: 2x2 plan so the whole thing fits on one screen */
   @media (min-width: 761px) {
     .timeline { grid-template-columns: 1fr 1fr; }
+    .stop:last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; width: calc(50% - 8px); }
     body.said-yes main { padding-top: 24px; padding-bottom: 24px; }
     #plan .card { padding: 24px 20px; }
     #plan h1 { margin-bottom: 4px; }
     #plan p.lead { margin-bottom: 0; }
     .signoff { margin-top: 20px; }
+  }
+  @media (min-width: 761px) and (max-height: 760px) {
+    #plan h1 { font-size: 2.4rem; }
+    .stop { padding: 10px 16px; }
+    .timeline { gap: 12px; margin-top: 16px; }
+    .signoff { margin-top: 12px; }
   }
   /* Phones: photos peek in from the edges, the plan card sits on top */
   @media (max-width: 760px) {
